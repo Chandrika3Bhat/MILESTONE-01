@@ -2,12 +2,8 @@ const express = require('express');
 
 module.exports = (expenses, validCategories) => {
     const router = express.Router();
-
-    // Add Expense Endpoint
     router.post('/', (req, res) => {
         const { category, amount, date } = req.body;
-
-        // Validate input
         if (!validCategories.includes(category)) {
             return res.status(400).json({
                 status: 'error',
@@ -23,8 +19,6 @@ module.exports = (expenses, validCategories) => {
                 error: 'Amount must be a positive number.',
             });
         }
-
-        // Add the new expense to the array
         const newExpense = {
             id: expenses.length + 1,
             category,
@@ -40,18 +34,15 @@ module.exports = (expenses, validCategories) => {
             error: null,
         });
     });
-
-    // Get Expenses Endpoint
     router.get('/', (req, res) => {
         const { category, startDate, endDate } = req.query;
         let filteredExpenses = [...expenses];
 
-        // Filter by category if provided
         if (category) {
             filteredExpenses = filteredExpenses.filter((expense) => expense.category === category);
         }
 
-        // Filter by date range if provided
+
         if (startDate || endDate) {
             filteredExpenses = filteredExpenses.filter((expense) => {
                 const expenseDate = new Date(expense.date);
@@ -66,7 +57,7 @@ module.exports = (expenses, validCategories) => {
         });
     });
 
-    // Analyze Spending Endpoint
+
     router.get('/analysis', (req, res) => {
         const totalSpent = expenses.reduce((acc, expense) => acc + expense.amount, 0);
         const categoryWise = expenses.reduce((acc, expense) => {
